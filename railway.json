@@ -3,6 +3,6 @@
     "command": "pip install -r requirements.txt"
   },
   "start": {
-    "command": "python3 main.py --host=0.0.0.0"
+    "command": "python3 server.py --host=0.0.0.0"
   }
 }
