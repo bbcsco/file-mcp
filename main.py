@@ -28,7 +28,7 @@ class StaticTokenVerifier(TokenVerifier):
             return None
 
 
-def create_server(opts: dict = {}) -> FastMCP:
+def create_server(**kwargs) -> FastMCP:
     token = os.environ.get('MCP_ACCESS_TOKEN', '')
     if not token:
         token = 'rnd-' + secrets.token_urlsafe(32)
@@ -42,7 +42,7 @@ def create_server(opts: dict = {}) -> FastMCP:
             resource_server_url='http://localhost',
         ),
         token_verifier=StaticTokenVerifier(token),
-        **opts
+        **kwargs
     )
     return mcp
 
@@ -65,7 +65,6 @@ def add_files(mcp: FastMCP):
 
 
 if __name__ == "__main__":
-    opts = [x.lstrip('-').split('=', 1) for x in sys.argv[1:]]
-    mcp = create_server(dict(opts))
+    mcp = create_server(host='0.0.0.0')
     add_files(mcp)
     mcp.run(transport="streamable-http")
