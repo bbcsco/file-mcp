@@ -1,5 +1,6 @@
 import os
 import secrets
+import sys
 
 from pathlib import Path
 
@@ -27,7 +28,7 @@ class StaticTokenVerifier(TokenVerifier):
             return None
 
 
-def create_server():
+def create_server(opts: dict = {}) -> FastMCP:
     token = os.environ.get('MCP_ACCESS_TOKEN', '')
     if not token:
         token = 'rnd-' + secrets.token_urlsafe(32)
@@ -41,6 +42,7 @@ def create_server():
             resource_server_url='http://localhost',
         ),
         token_verifier=StaticTokenVerifier(token),
+        **opts
     )
     return mcp
 
@@ -63,6 +65,7 @@ def add_files(mcp: FastMCP):
 
 
 if __name__ == "__main__":
-    mcp = create_server()
+    opts = [x.lstrip('-').split('=', 1) for x in sys.argv[1:]]
+    mcp = create_server(dict(opts))
     add_files(mcp)
     mcp.run(transport="streamable-http")
